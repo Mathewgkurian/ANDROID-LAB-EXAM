@@ -1,0 +1,84 @@
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.database.Cursor;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+
+public class MainActivity extends AppCompatActivity {
+    EditText name,phone;
+    Button insert;
+    TextView tv;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        insert=findViewById(R.id.insert);
+        update=findViewById(R.id.update);
+        delete=findViewById(R.id.delete);
+        view=findViewById(R.id.view);
+        name=findViewById(R.id.name);
+        phone=findViewById(R.id.phone);
+        tv=findViewById(R.id.tv);
+
+        database DB=new database(this);
+
+        insert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String Name=name.getText().toString();
+                String Phone=phone.getText().toString();
+
+                Boolean checkinsert=DB.insertdata(Name,Phone);
+                if(checkinsert==true){
+                    Toast.makeText(MainActivity.this, "Data Inserted", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Not Inserted", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        
+        
+        
+        JAVA 2
+        
+        import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+
+import androidx.annotation.Nullable;
+public class database extends SQLiteOpenHelper {
+    public database(Context context) {
+        super(context, "userdata.db", null, 1);
+    }
+
+    @Override
+    public void onCreate(SQLiteDatabase DB) {
+        DB.execSQL("create Table Userdetails(name TEXT primary key,phone Text)");
+    }
+
+    @Override
+    public void onUpgrade(SQLiteDatabase DB, int i, int i1) {
+        DB.execSQL("drop Table if exists Userdetails");
+    }
+
+    public boolean insertdata(String name, String phone) {
+        SQLiteDatabase DB = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", name);
+        contentValues.put("phone", phone);
+        long result = DB.insert("Userdetails", null, contentValues);
+        if (result == -1) {
+            return false;
+        } else {
+            return true;
+        }
+    }
